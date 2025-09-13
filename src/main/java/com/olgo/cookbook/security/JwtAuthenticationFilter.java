@@ -3,11 +3,11 @@ package com.olgo.cookbook.security;
 import com.olgo.cookbook.model.User;
 import com.olgo.cookbook.service.JwtService;
 import com.olgo.cookbook.service.UserService;
+import com.olgo.cookbook.utils.RequestUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -34,17 +34,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String jwt = RequestUtils.extractJwtFromRequest(request);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        // If still null, skip
+        if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7); // strip "Bearer "
         final String userId = jwtService.extractUserId(jwt);
 
-        if (userId == null && authenticationExists()) {
+        if (userId == null || authenticationExists()) {
             filterChain.doFilter(request, response);
             return;
         }

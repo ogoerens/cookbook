@@ -5,7 +5,11 @@ import com.olgo.cookbook.dto.responses.RecipeBookmarkResponse;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
 import com.olgo.cookbook.model.User;
+import com.olgo.cookbook.service.JwtService;
 import com.olgo.cookbook.service.RecipeBookmarkService;
+import com.olgo.cookbook.utils.RequestUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +22,11 @@ import java.util.UUID;
 public class RecipeBookmarkController {
 
     private final RecipeBookmarkService bookmarkService;
+    private final JwtService jwtService;
 
-    public RecipeBookmarkController(RecipeBookmarkService bookmarkService) {
+    public RecipeBookmarkController(RecipeBookmarkService bookmarkService, JwtService jwtService) {
         this.bookmarkService = bookmarkService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping
@@ -36,7 +42,7 @@ public class RecipeBookmarkController {
                 request.getPicture(),
                 request.getTags()
         );
-        return ResponseEntity.ok("Bookmark created with ID: " + saved.getId());
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping
@@ -83,4 +89,18 @@ public class RecipeBookmarkController {
                 .header("Content-Type", "image/jpeg")
                 .body(picture);
     }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<?> deleteBookmark(@PathVariable UUID id, HttpServletRequest request) {
+        String token = RequestUtils.extractJwtFromRequest(request);
+        UUID userId = UUID.fromString(jwtService.extractUserId(token));
+
+        try {
+            bookmarkService.deleteBookmark(id, userId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 }

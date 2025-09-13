@@ -32,4 +32,9 @@ public interface RecipeBookmarkRepository extends JpaRepository<RecipeBookmark, 
             @Param("tags") List<Tag> tags,
             @Param("tagCount") long tagCount
     );
+
+    boolean existsByIdAndUserId(UUID id, UUID userId);
+
+    void deleteByIdAndUserId(UUID id, UUID userId);
+
 }

@@ -84,4 +84,13 @@ public class RecipeBookmarkService {
 
         return picture;
     }
+
+    public void deleteBookmark(UUID bookmarkId, UUID userId) {
+        boolean exists = bookmarkRepository.existsByIdAndUserId(bookmarkId, userId);
+        if (!exists) {
+            throw new IllegalArgumentException("Bookmark not found or not owned by user");
+        }
+
+        bookmarkRepository.deleteById(bookmarkId);
+    }
 }
