@@ -7,6 +7,7 @@
 
 ## Build Application BE
 
+* source .env
 * ./graldew clean bootJar
 * Output in: build/libs/
 
@@ -16,9 +17,9 @@
 
 ### Register
 
-curl -v -X POST http://pi:8080/api/register/user \
+curl -v -X POST https://www.bitenote.com/api/register/user \
 -H "Content-Type: application/json" \
--d '{"email":"test@example.com", "password":"supersecure123"}'
+-d '{"email":"test2@example.com", "password":"supersecure123"}'
 
 ### LOGIN
 

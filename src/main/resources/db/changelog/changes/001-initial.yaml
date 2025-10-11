@@ -1,0 +1,180 @@
+databaseChangeLog:
+- changeSet:
+    id: 1757836060227-1
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_bookmarks_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: picture
+            type: OID
+        - column:
+            constraints:
+              nullable: false
+            name: reference_type
+            type: VARCHAR(255)
+        - column:
+            name: url
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: UUID
+        tableName: recipe_bookmarks
+- changeSet:
+    id: 1757836060227-2
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: users_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: joined
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: username
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1757836060227-3
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: tags_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: tags
+- changeSet:
+    id: 1757836060227-4
+    author: ogoerens (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: uk6dotkott2kjsp8vw4d0m25fb7
+        tableName: users
+- changeSet:
+    id: 1757836060227-5
+    author: ogoerens (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username
+        constraintName: ukr43af9ap4edm43mmtq01oddj6
+        tableName: users
+- changeSet:
+    id: 1757836060227-6
+    author: ogoerens (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: ukt48xdq560gs3gap9g7jg36kgc
+        tableName: tags
+- changeSet:
+    id: 1757836060227-7
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_bm_tags_pkey
+            name: recipe_boomkark_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_bm_tags_pkey
+            name: tag_id
+            type: UUID
+        tableName: recipe_bm_tags
+- changeSet:
+    id: 1757836060227-8
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tag_id
+        baseTableName: recipe_bm_tags
+        constraintName: fk66epgn1pa84lf8apa360y22hy
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tags
+        validate: true
+- changeSet:
+    id: 1757836060227-9
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: recipe_bookmarks
+        constraintName: fkfm2l0nfe1112rwrv3ql6ax6ny
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1757836060227-10
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: recipe_boomkark_id
+        baseTableName: recipe_bm_tags
+        constraintName: fkrvi20s2qg3r7cxt3nvwn1nh5i
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: recipe_bookmarks
+        validate: true
+
