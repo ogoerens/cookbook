@@ -40,21 +40,23 @@ public class RecipeBookmarkController {
                 request.getReferenceType(),
                 request.getUrl(),
                 request.getPicture(),
-                request.getTags()
+                request.getTags(),
+                request.getNote()
         );
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(RecipeBookmarkResponse.toDto(saved));
     }
 
     @GetMapping
     public ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarks(@AuthenticationPrincipal User user) {
         List<RecipeBookmark> bookmarks = bookmarkService.getBookmarksForUser(user);
-        var response = bookmarks.stream()
+        List<RecipeBookmarkResponse> response = bookmarks.stream()
                 .map(b -> new RecipeBookmarkResponse(
                         b.getId(),
                         b.getName(),
                         b.getReferenceType(),
                         b.getUrl(),
-                        b.getTags().stream().map(Tag::getName).toList()
+                        b.getTags().stream().map(Tag::getName).toList(),
+                        (b.getNote() == null ? null : b.getNote().getAdditionalInfo())
                 ))
                 .toList();
         return ResponseEntity.ok(response);
@@ -66,13 +68,14 @@ public class RecipeBookmarkController {
             @RequestParam List<String> tags
     ) {
         var bookmarks = bookmarkService.getBookmarksForUserWithTags(user, tags);
-        var response = bookmarks.stream()
+        List<RecipeBookmarkResponse> response = bookmarks.stream()
                 .map(b -> new RecipeBookmarkResponse(
                         b.getId(),
                         b.getName(),
                         b.getReferenceType(),
                         b.getUrl(),
-                        b.getTags().stream().map(Tag::getName).toList()
+                        b.getTags().stream().map(Tag::getName).toList(),
+                        (b.getNote() == null ? null : b.getNote().getAdditionalInfo())
                 ))
                 .toList();
         return ResponseEntity.ok(response);

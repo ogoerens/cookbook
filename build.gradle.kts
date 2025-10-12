@@ -8,7 +8,7 @@ plugins {
 group = "com.olgo"
 version = "0.0.1-SNAPSHOT"
 
-val liquibaseVersion = "4.29.2"     // for liquibase-core + liquibase-hibernate6
+val liquibaseVersion = "4.33.0"     // for liquibase-core + liquibase-hibernate6
 val pgDriverVersion = "42.7.3"
 
 java {
@@ -43,6 +43,8 @@ dependencies {
     add("liquibaseRuntime", "org.liquibase.ext:liquibase-hibernate6:$liquibaseVersion")
     add("liquibaseRuntime", "org.postgresql:postgresql:$pgDriverVersion")
 
+    liquibaseRuntime("org.springframework.boot:spring-boot-starter-data-jpa")
+
     // Make your compiled classes + runtime deps visible to the plugin (so it can see entities)
     add("liquibaseRuntime", sourceSets.main.get().output)
     add("liquibaseRuntime", sourceSets.main.get().runtimeClasspath)
@@ -59,7 +61,7 @@ configure<org.liquibase.gradle.LiquibaseExtension> {
     val env = (project.findProperty("env") as String?) ?: "test"
 
     activities.register("main") {
-        val changeLogPath = "src/main/resources/db/changelog/changes/001-initial.yaml"
+        val changeLogPath = "src/main/resources/db/changelog/changes/0XX-changeName.yaml"
         val dbUrl = if (env == "test")
             "jdbc:postgresql://localhost:5432/cookbook_db"
         else

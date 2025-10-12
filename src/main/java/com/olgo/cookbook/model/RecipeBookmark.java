@@ -41,16 +41,20 @@ public class RecipeBookmark {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToOne(mappedBy = "recipeBookmark", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Note note;
+
     public RecipeBookmark() {
     }
 
     // Optional constructor for convenience
-    public RecipeBookmark(ReferenceType referenceType, String name, String url, byte[] picture, User user) {
+    public RecipeBookmark(ReferenceType referenceType, String name, String url, byte[] picture, User user, Note note) {
         this.referenceType = referenceType;
         this.name = name;
         this.url = url;
         this.picture = picture;
         this.user = user;
+        this.setNote(note);
     }
 
     // Getters and setters
@@ -73,6 +77,17 @@ public class RecipeBookmark {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Note getNote() {
+        return note;
+    }
+
+    public void setNote(Note note) {
+        if (note != null) {
+            note.setRecipeBookmark(this);
+            this.note = note;
+        }
     }
 
     public String getUrl() {

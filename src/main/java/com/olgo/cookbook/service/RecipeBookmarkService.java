@@ -1,5 +1,6 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.model.Note;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
 import com.olgo.cookbook.model.User;
@@ -33,7 +34,8 @@ public class RecipeBookmarkService {
             ReferenceType referenceType,
             String url,
             byte[] picture,
-            List<String> tagNames
+            List<String> tagNames,
+            Note note
     ) {
         Set<Tag> tags = resolveTags(tagNames);
 
@@ -42,7 +44,8 @@ public class RecipeBookmarkService {
                 name,
                 url,
                 picture,
-                user
+                user,
+                note
         );
         bookmark.setTags(tags);
 

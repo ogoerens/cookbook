@@ -1,0 +1,34 @@
+databaseChangeLog:
+- changeSet:
+    id: 1760202043247-1
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: notesPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: additional_info
+            type: VARCHAR(255)
+        tableName: notes
+- changeSet:
+    id: 1760202043247-2
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: notes
+        constraintName: FK4vtxf5mmwh8wpiap8nxr4kq2l
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: recipe_bookmarks
+        validate: true
+

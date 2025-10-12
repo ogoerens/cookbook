@@ -48,3 +48,11 @@ eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1NDYyNjllYS0yODFlLTQ4MGUtODY1Mi1kODFhMzFmM2JjODE
 -d '{"name": "Simple Pasta", "referenceType": "URL", "url": "https://example.com/pasta", "picture": null, "
 tags": ["easy", "dinner"]}'
 
+### ADD NOTE
+
+curl -v -X PUT http://localhost:8080/api/note/d8c8f833-466f-42a1-b64a-f0790d4a7217 \
+-H "Authorization: Bearer \
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1NjllYmM0MS1kMmRhLTRmNzEtOTBmYy1kMWU2MTJjMmJlZDgiLCJpYXQiOjE3NjAyNTY3NzMsImV4cCI6MTc2MDM0MzE3M30.B8AaeOOTgge5Y7OpN__ArSojZrVyAfRhT7EHThvWMFcwG6akoxsfWDnnj_wzMhrUW2NkO4XII7IYdCfQpGholA" \
+-H "Content-Type:  text/plain " \
+-d 'Easy peasy, perfect for quick dinner'
+
