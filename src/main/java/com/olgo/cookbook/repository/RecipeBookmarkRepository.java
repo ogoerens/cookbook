@@ -3,6 +3,7 @@ package com.olgo.cookbook.repository;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
 import com.olgo.cookbook.model.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,6 +33,10 @@ public interface RecipeBookmarkRepository extends JpaRepository<RecipeBookmark, 
             @Param("tags") List<Tag> tags,
             @Param("tagCount") long tagCount
     );
+
+    @EntityGraph(attributePaths = "tags")
+    @Query("select b from RecipeBookmark b where b.id = :id")
+    Optional<RecipeBookmark> findByIdWithTags(UUID id);
 
     boolean existsByIdAndUserId(UUID id, UUID userId);
 

@@ -33,7 +33,8 @@ public class RecipeBookmark {
     @JoinTable(
             name = "recipe_bm_tags",
             joinColumns = @JoinColumn(name = "recipe_boomkark_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
+            inverseJoinColumns = @JoinColumn(name = "tag_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_boomkark_id", "tag_id"})
     )
     private Set<Tag> tags = new HashSet<>();
 
