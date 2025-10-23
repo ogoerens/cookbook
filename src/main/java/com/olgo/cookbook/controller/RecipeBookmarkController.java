@@ -47,19 +47,13 @@ public class RecipeBookmarkController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarks(@AuthenticationPrincipal(expression = "id") UUID userId) {
-        List<RecipeBookmark> bookmarks = bookmarkService.getBookmarksForUserId(userId);
-        List<RecipeBookmarkResponse> response = bookmarks.stream()
-                .map(b -> new RecipeBookmarkResponse(
-                        b.getId(),
-                        b.getName(),
-                        b.getReferenceType(),
-                        b.getUrl(),
-                        b.getTags().stream().map(Tag::getName).toList(),
-                        (b.getNote() == null ? null : b.getNote().getAdditionalInfo())
-                ))
-                .toList();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<RecipeBookmarkResponse>> getAllMyBookmarks(@AuthenticationPrincipal(expression = "id") UUID userId) {
+        return getAllBookmarks(userId);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarksForUser(@PathVariable UUID userId) {
+        return getAllBookmarks(userId);
     }
 
     @GetMapping("/filter")
@@ -106,4 +100,19 @@ public class RecipeBookmarkController {
         }
     }
 
+
+    private ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarks(UUID userId) {
+        List<RecipeBookmark> bookmarks = bookmarkService.getBookmarksForUserId(userId);
+        List<RecipeBookmarkResponse> response = bookmarks.stream()
+                .map(b -> new RecipeBookmarkResponse(
+                        b.getId(),
+                        b.getName(),
+                        b.getReferenceType(),
+                        b.getUrl(),
+                        b.getTags().stream().map(Tag::getName).toList(),
+                        (b.getNote() == null ? null : b.getNote().getAdditionalInfo())
+                ))
+                .toList();
+        return ResponseEntity.ok(response);
+    }
 }
