@@ -1,6 +1,7 @@
 package com.olgo.cookbook.security;
 
 import com.olgo.cookbook.model.User;
+import com.olgo.cookbook.model.UserPrincipal;
 import com.olgo.cookbook.service.JwtService;
 import com.olgo.cookbook.service.UserService;
 import com.olgo.cookbook.utils.RequestUtils;
@@ -69,8 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private UsernamePasswordAuthenticationToken createTokenForAuthenticatedUser(User user, HttpServletRequest request) {
+        UserPrincipal userPrincipal = new UserPrincipal(user.getId(), user.getUsername());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                user, null, null
+                userPrincipal, null, null
         );
         authToken.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)

@@ -1,11 +1,14 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.dto.UserDto;
 import com.olgo.cookbook.model.User;
 import com.olgo.cookbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -20,6 +23,14 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public List<UserDto> findByUsernameContainingIgnoreCase(String username) {
+        return userRepository.findByUsernameContainingIgnoreCase(username).stream().map(UserDto::from).toList();
     }
 
     public boolean emailExists(String email) {
@@ -41,4 +52,9 @@ public class UserService {
     public void doIfUserExists(String userId, Consumer<User> action) {
         findById(UUID.fromString(userId)).ifPresent(action);
     }
+
+    public Set<User> getFollowing(User user) {
+        return user.getFollowing();
+    }
+
 }

@@ -31,11 +31,11 @@ public class RecipeBookmarkController {
 
     @PostMapping
     public ResponseEntity<?> createBookmark(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal(expression = "id") UUID userId,
             @RequestBody RecipeBookmarkRequest request
     ) {
         RecipeBookmark saved = bookmarkService.createBookmark(
-                user,
+                userId,
                 request.getName(),
                 request.getReferenceType(),
                 request.getUrl(),
@@ -47,8 +47,8 @@ public class RecipeBookmarkController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarks(@AuthenticationPrincipal User user) {
-        List<RecipeBookmark> bookmarks = bookmarkService.getBookmarksForUser(user);
+    public ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarks(@AuthenticationPrincipal(expression = "id") UUID userId) {
+        List<RecipeBookmark> bookmarks = bookmarkService.getBookmarksForUserId(userId);
         List<RecipeBookmarkResponse> response = bookmarks.stream()
                 .map(b -> new RecipeBookmarkResponse(
                         b.getId(),
@@ -64,10 +64,10 @@ public class RecipeBookmarkController {
 
     @GetMapping("/filter")
     public ResponseEntity<List<RecipeBookmarkResponse>> getBookmarksWithTags(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal(expression = "id") UUID userId,
             @RequestParam List<String> tags
     ) {
-        var bookmarks = bookmarkService.getBookmarksForUserWithTags(user, tags);
+        var bookmarks = bookmarkService.getBookmarksForUserIdWithTags(userId, tags);
         List<RecipeBookmarkResponse> response = bookmarks.stream()
                 .map(b -> new RecipeBookmarkResponse(
                         b.getId(),

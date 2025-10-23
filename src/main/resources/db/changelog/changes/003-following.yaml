@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: User_following
+      author: ogoerens (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_followsPK
+                  name: follower_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_followsPK
+                  name: followed_id
+                  type: UUID
+            tableName: user_follows
+  - changeSet:
+      id: user_following_followed_fk
+      author: ogoerens (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: followed_id
+            baseTableName: user_follows
+            constraintName: fk_user_follows_followed
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: users
+            validate: true
+            onDelete: CASCADE
+  - changeSet:
+      id: user_following_follower_fk
+      author: ogoerens (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: follower_id
+            baseTableName: user_follows
+            constraintName: fk_user_follows_follower
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: users
+            validate: true
+            onDelete: CASCADE
+
+

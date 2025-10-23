@@ -3,6 +3,7 @@ package com.olgo.cookbook.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +25,14 @@ public class User {
 
     @Column(nullable = false)
     private LocalDate joined;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_id")
+    )
+    private Set<User> following;
 
     // Constructors
     public User() {
@@ -75,6 +84,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<User> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<User> following) {
+        this.following = following;
+    }
+
+    public void follow(User user) {
+        this.following.add(user);
+    }
+
+    public void unfollow(User user) {
+        this.following.remove(user);
     }
 }
 

@@ -16,6 +16,8 @@ public interface RecipeBookmarkRepository extends JpaRepository<RecipeBookmark, 
 
     List<RecipeBookmark> findAllByUser(User user);
 
+    List<RecipeBookmark> findAllByUserId(UUID userid);
+
     List<RecipeBookmark> findByUserAndNameContainingIgnoreCase(User user, String name);
 
     Optional<RecipeBookmark> findByIdAndUserId(UUID id, UUID userId);
@@ -24,12 +26,12 @@ public interface RecipeBookmarkRepository extends JpaRepository<RecipeBookmark, 
     @Query("""
                 SELECT rb FROM RecipeBookmark rb
                 JOIN rb.tags tag
-                WHERE rb.user = :user AND tag IN :tags
+                WHERE rb.user.id = :userId AND tag IN :tags
                 GROUP BY rb
                 HAVING COUNT(DISTINCT tag) = :tagCount
             """)
-    List<RecipeBookmark> findByUserAndMatchingAllTags(
-            @Param("user") User user,
+    List<RecipeBookmark> findByUserIdAndMatchingAllTags(
+            @Param("userId") UUID userId,
             @Param("tags") List<Tag> tags,
             @Param("tagCount") long tagCount
     );

@@ -7,6 +7,7 @@ import com.olgo.cookbook.model.User;
 import com.olgo.cookbook.model.enums.ReferenceType;
 import com.olgo.cookbook.repository.RecipeBookmarkRepository;
 import com.olgo.cookbook.repository.TagRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +17,23 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeBookmarkService {
 
+    private final EntityManager entityManager;
     private final RecipeBookmarkRepository bookmarkRepository;
     private final TagRepository tagRepository;
 
     public RecipeBookmarkService(
+            EntityManager entityManager,
             RecipeBookmarkRepository bookmarkRepository,
             TagRepository tagRepository
     ) {
+        this.entityManager = entityManager;
         this.bookmarkRepository = bookmarkRepository;
         this.tagRepository = tagRepository;
     }
 
     @Transactional
     public RecipeBookmark createBookmark(
-            User user,
+            UUID userId,
             String name,
             ReferenceType referenceType,
             String url,
@@ -38,13 +42,14 @@ public class RecipeBookmarkService {
             Note note
     ) {
         Set<Tag> tags = resolveTags(tagNames);
+        User userRef = entityManager.getReference(User.class, userId);
 
         RecipeBookmark bookmark = new RecipeBookmark(
                 referenceType,
                 name,
                 url,
                 picture,
-                user,
+                userRef,
                 note
         );
         bookmark.setTags(tags);
@@ -52,13 +57,13 @@ public class RecipeBookmarkService {
         return bookmarkRepository.save(bookmark);
     }
 
-    public List<RecipeBookmark> getBookmarksForUser(User user) {
-        return bookmarkRepository.findAllByUser(user);
+    public List<RecipeBookmark> getBookmarksForUserId(UUID userId) {
+        return bookmarkRepository.findAllByUserId(userId);
     }
 
-    public List<RecipeBookmark> getBookmarksForUserWithTags(User user, List<String> tagNames) {
+    public List<RecipeBookmark> getBookmarksForUserIdWithTags(UUID userId, List<String> tagNames) {
         Set<Tag> tags = new HashSet<>(resolveTags(tagNames));
-        return bookmarkRepository.findByUserAndMatchingAllTags(user, new ArrayList<>(tags), tags.size());
+        return bookmarkRepository.findByUserIdAndMatchingAllTags(userId, new ArrayList<>(tags), tags.size());
     }
 
     public RecipeBookmark getBookmarkByIdForUser(UUID id, User user) {
