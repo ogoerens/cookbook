@@ -22,13 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/login")
 public class LoginController {
 
+    private final CookieService cookieService;
     private final UserLoginService userLoginService;
     private final JwtService jwtService;
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 
     @Autowired
-    LoginController(UserLoginService userLoginService, JwtService jwtService) {
+    LoginController(CookieService cookieService, UserLoginService userLoginService, JwtService jwtService) {
+        this.cookieService = cookieService;
         this.userLoginService = userLoginService;
         this.jwtService = jwtService;
     }
@@ -38,7 +40,7 @@ public class LoginController {
         try {
             User user = userLoginService.authenticate(request.getEmail(), request.getPassword());
             String token = jwtService.generateToken(user.getId().toString());
-            Cookie cookie = CookieService.getSecureCookie("token", token);
+            Cookie cookie = cookieService.getSecureCookie("token", token);
             response.addCookie(cookie);
 
             return ResponseEntity.ok(new UserLoginResponse(token));

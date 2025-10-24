@@ -38,6 +38,10 @@ dependencies {
     //DB - Liquibase
     implementation("org.liquibase:liquibase-core")
     implementation("org.postgresql:postgresql")
+    //Lombok
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
+
 
     // --- Liquibase Gradle plugin runtime (separate classpath for generation tasks) ---
     add("liquibaseRuntime", "org.liquibase:liquibase-core:$liquibaseVersion")
