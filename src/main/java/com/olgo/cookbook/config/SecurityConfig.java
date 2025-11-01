@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Open auth/registration endpoints (use patterns to avoid brittle exact matches)
-                        .requestMatchers("/api/register/**", "/api/login/**").permitAll()
+                        .requestMatchers("/api/user/register/**", "/api/auth/login").permitAll()
 
                         // (optional) health/open endpoints
                         .requestMatchers("/api/actuator/health").permitAll()
