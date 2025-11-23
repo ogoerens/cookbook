@@ -1,0 +1,127 @@
+databaseChangeLog:
+- changeSet:
+    id: 1763807320124-1
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ingredientPK
+            name: id
+            type: UUID
+        - column:
+            name: name
+            type: VARCHAR(255)
+        tableName: ingredient
+- changeSet:
+    id: 1763807320124-2
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipePK
+            name: id
+            type: UUID
+        - column:
+            name: name
+            type: VARCHAR(255)
+        tableName: recipe
+- changeSet:
+    id: 1763807320124-3
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_ingredientPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: quantity
+            type: FLOAT(53)
+        - column:
+            name: unit
+            type: SMALLINT
+        - column:
+            name: ingredient_id
+            type: UUID
+        - column:
+            name: recipe_id
+            type: UUID
+        tableName: recipe_ingredient
+- changeSet:
+    id: 1763807320124-4
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_stepsPK
+            name: recipe_id
+            type: UUID
+        - column:
+            name: steps
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_stepsPK
+            name: steps_order
+            type: INTEGER
+        tableName: recipe_steps
+- changeSet:
+    id: 1763807320124-5
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ingredient_id
+        baseTableName: recipe_ingredient
+        constraintName: FK9b3oxoskt0chwqxge0cnlkc29
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: ingredient
+        validate: true
+- changeSet:
+    id: 1763807320124-6
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: recipe_id
+        baseTableName: recipe_ingredient
+        constraintName: FKgu1oxq7mbcgkx5dah6o8geirh
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: recipe
+        validate: true
+- changeSet:
+    id: 1763807320124-7
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: recipe_id
+        baseTableName: recipe_steps
+        constraintName: FKkolfmsmgn0qbdwymyhrbflm9f
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: recipe
+        validate: true
+
