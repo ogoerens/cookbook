@@ -1,5 +1,6 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.dto.responses.RecipeBookmarkResponse;
 import com.olgo.cookbook.model.Note;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
@@ -8,8 +9,8 @@ import com.olgo.cookbook.model.enums.ReferenceType;
 import com.olgo.cookbook.repository.RecipeBookmarkRepository;
 import com.olgo.cookbook.repository.TagRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,8 +58,13 @@ public class RecipeBookmarkService {
         return bookmarkRepository.save(bookmark);
     }
 
-    public List<RecipeBookmark> getBookmarksForUserId(UUID userId) {
-        return bookmarkRepository.findAllByUserId(userId);
+    @Transactional(readOnly = true)
+    public List<RecipeBookmarkResponse> getBookmarksForUserId(UUID userId) {
+        List<RecipeBookmark> bookmarks = bookmarkRepository.findAllByUserId(userId);
+
+        return bookmarks.stream()
+                .map(RecipeBookmarkResponse::toDto)
+                .toList();
     }
 
     public List<RecipeBookmark> getBookmarksForUserIdWithTags(UUID userId, List<String> tagNames) {

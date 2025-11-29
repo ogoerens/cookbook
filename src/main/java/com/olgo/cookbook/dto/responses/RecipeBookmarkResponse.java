@@ -3,10 +3,12 @@ package com.olgo.cookbook.dto.responses;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
 import com.olgo.cookbook.model.enums.ReferenceType;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class RecipeBookmarkResponse {
     private UUID id;
     private String name;
@@ -22,31 +24,6 @@ public class RecipeBookmarkResponse {
         this.url = url;
         this.tags = tags;
         this.noteAddInfo = noteAddInfo;
-    }
-
-    // Getters only
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ReferenceType getReferenceType() {
-        return referenceType;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public String getnoteAddInfo() {
-        return noteAddInfo;
     }
 
     public static RecipeBookmarkResponse toDto(RecipeBookmark recipeBookmark) {

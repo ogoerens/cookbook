@@ -10,10 +10,13 @@ import com.olgo.cookbook.service.RecipeBookmarkService;
 import com.olgo.cookbook.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,17 +32,25 @@ public class RecipeBookmarkController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createBookmark(
             @AuthenticationPrincipal(expression = "id") UUID userId,
-            @RequestBody RecipeBookmarkRequest request
-    ) {
+            @RequestPart("bookmark") RecipeBookmarkRequest request,
+            @RequestPart(value = "pictures", required = false) List<MultipartFile> pictures
+    ) throws IOException {
+        byte[] pictureBytes = null;
+
+        // TODO: handle all pcitures, not only the first one
+        if (pictures != null && !pictures.isEmpty()) {
+            pictureBytes = pictures.get(0).getBytes();
+        }
+
         RecipeBookmark saved = bookmarkService.createBookmark(
                 userId,
                 request.getName(),
                 request.getReferenceType(),
                 request.getUrl(),
-                request.getPicture(),
+                pictureBytes,
                 request.getTags(),
                 request.getNote()
         );
@@ -48,12 +59,14 @@ public class RecipeBookmarkController {
 
     @GetMapping
     public ResponseEntity<List<RecipeBookmarkResponse>> getAllMyBookmarks(@AuthenticationPrincipal(expression = "id") UUID userId) {
-        return getAllBookmarks(userId);
+        List<RecipeBookmarkResponse> response = bookmarkService.getBookmarksForUserId(userId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarksForUser(@PathVariable UUID userId) {
-        return getAllBookmarks(userId);
+        List<RecipeBookmarkResponse> response = bookmarkService.getBookmarksForUserId(userId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/filter")
@@ -98,21 +111,5 @@ public class RecipeBookmarkController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-    }
-
-
-    private ResponseEntity<List<RecipeBookmarkResponse>> getAllBookmarks(UUID userId) {
-        List<RecipeBookmark> bookmarks = bookmarkService.getBookmarksForUserId(userId);
-        List<RecipeBookmarkResponse> response = bookmarks.stream()
-                .map(b -> new RecipeBookmarkResponse(
-                        b.getId(),
-                        b.getName(),
-                        b.getReferenceType(),
-                        b.getUrl(),
-                        b.getTags().stream().map(Tag::getName).toList(),
-                        (b.getNote() == null ? null : b.getNote().getAdditionalInfo())
-                ))
-                .toList();
-        return ResponseEntity.ok(response);
     }
 }

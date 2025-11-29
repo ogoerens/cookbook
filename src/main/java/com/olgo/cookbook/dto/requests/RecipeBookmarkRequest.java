@@ -9,7 +9,6 @@ public class RecipeBookmarkRequest {
     private String name;
     private ReferenceType referenceType;
     private String url;
-    private byte[] picture;
     private List<String> tags;
     private String noteAddInfo;
 
@@ -39,14 +38,6 @@ public class RecipeBookmarkRequest {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public byte[] getPicture() {
-        return picture;
-    }
-
-    public void setPicture(byte[] picture) {
-        this.picture = picture;
     }
 
     public List<String> getTags() {

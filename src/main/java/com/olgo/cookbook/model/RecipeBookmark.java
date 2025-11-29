@@ -1,5 +1,6 @@
 package com.olgo.cookbook.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.olgo.cookbook.model.enums.ReferenceType;
 import jakarta.persistence.*;
 
@@ -26,6 +27,8 @@ public class RecipeBookmark {
     private String url;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
     @Column
     private byte[] picture;
 
@@ -99,6 +102,7 @@ public class RecipeBookmark {
         this.url = url;
     }
 
+    @JsonIgnore
     public byte[] getPicture() {
         return picture;
     }
