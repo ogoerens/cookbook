@@ -4,8 +4,9 @@ import com.olgo.cookbook.dto.requests.RecipeBookmarkRequest;
 import com.olgo.cookbook.dto.responses.RecipeBookmarkResponse;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
-import com.olgo.cookbook.model.User;
+import com.olgo.cookbook.model.enums.ReferenceType;
 import com.olgo.cookbook.service.JwtService;
+import com.olgo.cookbook.service.PictureService;
 import com.olgo.cookbook.service.RecipeBookmarkService;
 import com.olgo.cookbook.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class RecipeBookmarkController {
         RecipeBookmark saved = bookmarkService.createBookmark(
                 userId,
                 request.getName(),
-                request.getReferenceType(),
+                pictureBytes == null ? ReferenceType.URL : ReferenceType.PICTURE,
                 request.getUrl(),
                 pictureBytes,
                 request.getTags(),
@@ -90,13 +91,13 @@ public class RecipeBookmarkController {
 
     @GetMapping("/{id}/picture")
     public ResponseEntity<byte[]> getPictureForBookmark(
-            @PathVariable UUID id,
-            @AuthenticationPrincipal User user
+            @PathVariable UUID id
     ) {
-        byte[] picture = bookmarkService.getPictureData(id, user);
+        byte[] picture = bookmarkService.getPictureData(id);
+        String contentType = PictureService.detectPictureType(picture);
 
         return ResponseEntity.ok()
-                .header("Content-Type", "image/jpeg")
+                .contentType(MediaType.parseMediaType(contentType))
                 .body(picture);
     }
 

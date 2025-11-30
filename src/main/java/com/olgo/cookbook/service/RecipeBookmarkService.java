@@ -72,8 +72,8 @@ public class RecipeBookmarkService {
         return bookmarkRepository.findByUserIdAndMatchingAllTags(userId, new ArrayList<>(tags), tags.size());
     }
 
-    public RecipeBookmark getBookmarkByIdForUser(UUID id, User user) {
-        return bookmarkRepository.findByIdAndUserId(id, user.getId())
+    public RecipeBookmark getBookmarkById(UUID id) {
+        return bookmarkRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bookmark not found or unauthorized"));
     }
 
@@ -84,8 +84,8 @@ public class RecipeBookmarkService {
                 ).collect(Collectors.toSet());
     }
 
-    public byte[] getPictureData(UUID bookmarkId, User user) {
-        RecipeBookmark bookmark = getBookmarkByIdForUser(bookmarkId, user);
+    public byte[] getPictureData(UUID bookmarkId) {
+        RecipeBookmark bookmark = getBookmarkById(bookmarkId);
 
         if (bookmark.getReferenceType() != ReferenceType.PICTURE) {
             throw new IllegalArgumentException("Bookmark is not of type PICTURE");
