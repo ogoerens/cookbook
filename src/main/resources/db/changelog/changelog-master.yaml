@@ -7,4 +7,6 @@ databaseChangeLog:
       file: db/changelog/changes/003-following.yaml
   - include:
       file: db/changelog/changes/004-recipe_and_ingredient.yaml
+  - include:
+      file: db/changelog/changes/005-multiplePictures.yaml
 

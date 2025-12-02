@@ -1,47 +1,43 @@
 package com.olgo.cookbook.service;
 
 import com.olgo.cookbook.dto.responses.RecipeBookmarkResponse;
-import com.olgo.cookbook.model.Note;
-import com.olgo.cookbook.model.RecipeBookmark;
-import com.olgo.cookbook.model.Tag;
-import com.olgo.cookbook.model.User;
+import com.olgo.cookbook.model.*;
 import com.olgo.cookbook.model.enums.ReferenceType;
+import com.olgo.cookbook.model.records.PictureData;
 import com.olgo.cookbook.repository.RecipeBookmarkRepository;
 import com.olgo.cookbook.repository.TagRepository;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
+@RequiredArgsConstructor
 public class RecipeBookmarkService {
 
     private final EntityManager entityManager;
     private final RecipeBookmarkRepository bookmarkRepository;
     private final TagRepository tagRepository;
-
-    public RecipeBookmarkService(
-            EntityManager entityManager,
-            RecipeBookmarkRepository bookmarkRepository,
-            TagRepository tagRepository
-    ) {
-        this.entityManager = entityManager;
-        this.bookmarkRepository = bookmarkRepository;
-        this.tagRepository = tagRepository;
-    }
+    private final PictureService pictureService;
 
     @Transactional
     public RecipeBookmark createBookmark(
             UUID userId,
             String name,
-            ReferenceType referenceType,
             String url,
-            byte[] picture,
+            List<MultipartFile> pictures,
             List<String> tagNames,
             Note note
     ) {
+        ReferenceType referenceType = pictures.isEmpty()
+                ? ReferenceType.URL
+                : ReferenceType.PICTURE;
+
         Set<Tag> tags = resolveTags(tagNames);
         User userRef = entityManager.getReference(User.class, userId);
 
@@ -49,11 +45,11 @@ public class RecipeBookmarkService {
                 referenceType,
                 name,
                 url,
-                picture,
                 userRef,
                 note
         );
         bookmark.setTags(tags);
+        pictureService.addPictures(pictures, bookmark);
 
         return bookmarkRepository.save(bookmark);
     }
@@ -84,19 +80,18 @@ public class RecipeBookmarkService {
                 ).collect(Collectors.toSet());
     }
 
-    public byte[] getPictureData(UUID bookmarkId) {
+    public PictureData getPictureData(UUID bookmarkId) {
         RecipeBookmark bookmark = getBookmarkById(bookmarkId);
 
         if (bookmark.getReferenceType() != ReferenceType.PICTURE) {
             throw new IllegalArgumentException("Bookmark is not of type PICTURE");
         }
 
-        byte[] picture = bookmark.getPicture();
-        if (picture == null || picture.length == 0) {
-            throw new NoSuchElementException("Picture not found for this bookmark");
-        }
+        RecipeBookmarkPicture picture = bookmark.getPictures().stream()
+                .min(Comparator.comparingInt(RecipeBookmarkPicture::getSortOrder))
+                .orElseThrow(() -> new NoSuchElementException("Picture not found for this bookmark"));
 
-        return picture;
+        return new PictureData(picture.getData(), picture.getContentType());
     }
 
     public void deleteBookmark(UUID bookmarkId, UUID userId) {

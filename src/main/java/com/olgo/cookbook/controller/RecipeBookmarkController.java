@@ -4,12 +4,14 @@ import com.olgo.cookbook.dto.requests.RecipeBookmarkRequest;
 import com.olgo.cookbook.dto.responses.RecipeBookmarkResponse;
 import com.olgo.cookbook.model.RecipeBookmark;
 import com.olgo.cookbook.model.Tag;
-import com.olgo.cookbook.model.enums.ReferenceType;
+import com.olgo.cookbook.model.records.PictureData;
+import com.olgo.cookbook.model.records.PictureMetadata;
 import com.olgo.cookbook.service.JwtService;
 import com.olgo.cookbook.service.PictureService;
 import com.olgo.cookbook.service.RecipeBookmarkService;
 import com.olgo.cookbook.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +24,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/bookmarks")
 public class RecipeBookmarkController {
 
     private final RecipeBookmarkService bookmarkService;
     private final JwtService jwtService;
-
-    public RecipeBookmarkController(RecipeBookmarkService bookmarkService, JwtService jwtService) {
-        this.bookmarkService = bookmarkService;
-        this.jwtService = jwtService;
-    }
+    private final PictureService pictureService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createBookmark(
@@ -39,19 +38,15 @@ public class RecipeBookmarkController {
             @RequestPart("bookmark") RecipeBookmarkRequest request,
             @RequestPart(value = "pictures", required = false) List<MultipartFile> pictures
     ) throws IOException {
-        byte[] pictureBytes = null;
 
-        // TODO: handle all pcitures, not only the first one
-        if (pictures != null && !pictures.isEmpty()) {
-            pictureBytes = pictures.get(0).getBytes();
-        }
+        List<MultipartFile> safePictures = (pictures != null) ? pictures : List.of();
+
 
         RecipeBookmark saved = bookmarkService.createBookmark(
                 userId,
                 request.getName(),
-                pictureBytes == null ? ReferenceType.URL : ReferenceType.PICTURE,
                 request.getUrl(),
-                pictureBytes,
+                safePictures,
                 request.getTags(),
                 request.getNote()
         );
@@ -93,12 +88,21 @@ public class RecipeBookmarkController {
     public ResponseEntity<byte[]> getPictureForBookmark(
             @PathVariable UUID id
     ) {
-        byte[] picture = bookmarkService.getPictureData(id);
-        String contentType = PictureService.detectPictureType(picture);
+        PictureData picture = bookmarkService.getPictureData(id);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(picture);
+                .contentType(MediaType.parseMediaType(picture.contentType()))
+                .body(picture.bytes());
+    }
+
+    @GetMapping("/{id}/pictures")
+    public ResponseEntity<List<PictureMetadata>> getPicturesForBookmark(
+            @PathVariable("id") UUID bookmarkId
+    ) {
+        RecipeBookmark bookmark = bookmarkService.getBookmarkById(bookmarkId);
+        List<PictureMetadata> pictureMetadata = pictureService.getPictureMetadataForBookmark(bookmark);
+
+        return ResponseEntity.ok(pictureMetadata);
     }
 
     @DeleteMapping("/{id}/delete")

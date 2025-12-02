@@ -1,0 +1,56 @@
+databaseChangeLog:
+- changeSet:
+    id: 1764496281645-1
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recipe_bookmark_picturePK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: content_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: data
+            type: OID
+        - column:
+            constraints:
+              nullable: false
+            name: sort_order
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: bookmark_id
+            type: UUID
+        tableName: recipe_bookmark_picture
+- changeSet:
+    id: 1764496281645-2
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bookmark_id
+        baseTableName: recipe_bookmark_picture
+        constraintName: FKrjvp0oxgqnkd46cjdcg9o25yw
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: recipe_bookmarks
+        validate: true
+- changeSet:
+    id: 1764496281645-3
+    author: ogoerens (generated)
+    changes:
+    - dropColumn:
+        columnName: picture
+        tableName: recipe_bookmarks
+

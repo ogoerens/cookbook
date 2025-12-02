@@ -3,11 +3,11 @@ package com.olgo.cookbook.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.olgo.cookbook.model.enums.ReferenceType;
 import jakarta.persistence.*;
+import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
+@Getter
 @Entity
 @Table(name = "recipe_bookmarks")
 public class RecipeBookmark {
@@ -26,11 +26,13 @@ public class RecipeBookmark {
     @Column
     private String url;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "bookmark",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     @JsonIgnore
-    @Column
-    private byte[] picture;
+    private List<RecipeBookmarkPicture> pictures = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -51,21 +53,16 @@ public class RecipeBookmark {
     public RecipeBookmark() {
     }
 
-    // Optional constructor for convenience
-    public RecipeBookmark(ReferenceType referenceType, String name, String url, byte[] picture, User user, Note note) {
+
+    public RecipeBookmark(ReferenceType referenceType, String name, String url, User user, Note note) {
         this.referenceType = referenceType;
         this.name = name;
         this.url = url;
-        this.picture = picture;
         this.user = user;
         this.setNote(note);
     }
 
-    // Getters and setters
-
-    public UUID getId() {
-        return id;
-    }
+    //  setters
 
     public ReferenceType getReferenceType() {
         return referenceType;
@@ -75,16 +72,9 @@ public class RecipeBookmark {
         this.referenceType = referenceType;
     }
 
-    public String getName() {
-        return name;
-    }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Note getNote() {
-        return note;
     }
 
     public void setNote(Note note) {
@@ -94,33 +84,12 @@ public class RecipeBookmark {
         }
     }
 
-    public String getUrl() {
-        return url;
-    }
-
     public void setUrl(String url) {
         this.url = url;
     }
 
-    @JsonIgnore
-    public byte[] getPicture() {
-        return picture;
-    }
-
-    public void setPicture(byte[] picture) {
-        this.picture = picture;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public void setUser(User user) {
