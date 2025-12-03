@@ -1,10 +1,14 @@
 package com.olgo.cookbook.controller;
 
+import com.olgo.cookbook.dto.UserDetailDto;
 import com.olgo.cookbook.dto.UserDto;
+import com.olgo.cookbook.dto.requests.PasswordUpdateDto;
 import com.olgo.cookbook.dto.requests.UserRegisterRequest;
+import com.olgo.cookbook.dto.requests.UsernameUpdate;
 import com.olgo.cookbook.model.User;
 import com.olgo.cookbook.service.UserRegistrationService;
 import com.olgo.cookbook.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,25 @@ public class UserController {
             logger.error("Registration failed for email {}: {}", request.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDetailDto> me(@AuthenticationPrincipal(expression = "id") UUID userId) {
+        UserDetailDto userDetailDto = userService.getUserDetail(userId);
+        return ResponseEntity.ok(userDetailDto);
+    }
+
+    @PatchMapping("/me/password")
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal(expression = "id") UUID userId,
+                                            @Valid @RequestBody() PasswordUpdateDto passwordUpdateDto) {
+        userService.updatePassword(userId, passwordUpdateDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/me/username")
+    public ResponseEntity<UserDetailDto> updateUsername(@AuthenticationPrincipal(expression = "id") UUID userId, @RequestBody UsernameUpdate usernameUpdate) {
+        userService.updateUsername(userId, usernameUpdate);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping()

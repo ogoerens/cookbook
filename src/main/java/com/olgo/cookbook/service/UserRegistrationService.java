@@ -20,8 +20,8 @@ public class UserRegistrationService {
     }
 
     public User registerUser(String email, LocalDate joined, String username, String rawPassword) {
-        if (username == null || username.isBlank()) {
-            username = email;
+        if (email == null || email.isEmpty() || username == null || username.isEmpty() || rawPassword == null || rawPassword.isEmpty()) {
+            throw new IllegalArgumentException("Missing information");
         }
         if (userService.emailExists(email)) {
             throw new RuntimeException("Email is already taken.");

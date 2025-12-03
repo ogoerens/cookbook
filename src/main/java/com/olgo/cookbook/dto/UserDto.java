@@ -4,9 +4,10 @@ import com.olgo.cookbook.model.User;
 
 import java.util.UUID;
 
+
 public class UserDto {
-    private UUID id;
-    private String username;
+    protected UUID id;
+    protected String username;
 
     public UserDto() {
     }
