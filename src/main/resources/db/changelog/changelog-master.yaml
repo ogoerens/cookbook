@@ -9,4 +9,6 @@ databaseChangeLog:
       file: db/changelog/changes/004-recipe_and_ingredient.yaml
   - include:
       file: db/changelog/changes/005-multiplePictures.yaml
+  - include:
+      file: db/changelog/changes/006-mealPlan.yaml
 

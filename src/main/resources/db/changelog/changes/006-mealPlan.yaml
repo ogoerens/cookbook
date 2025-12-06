@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1765031784564-1
+      author: ogoerens (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: meal_plan_entriesPK
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: date
+                  type: date
+              - column:
+                  constraints:
+                    nullable: false
+                  name: meal_type
+                  type: SMALLINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: needs_cooking
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: bookmark_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: UUID
+            tableName: meal_plan_entries
+  - changeSet:
+      id: 1765031784564-2
+      author: ogoerens (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: meal_plan_entries
+            constraintName: FK79qdi83hjlq3yifmmwakmto0q
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: users
+            validate: true
+  - changeSet:
+      id: 1765031784564-3
+      author: ogoerens (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: bookmark_id
+            baseTableName: meal_plan_entries
+            constraintName: FKks7ml4wghna9h3io0spw8g6ev
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: recipe_bookmarks
+            validate: true
+
