@@ -1,5 +1,6 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.exceptions.InvalidCredentialsException;
 import com.olgo.cookbook.model.User;
 import com.olgo.cookbook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,6 @@ public class UserLoginService {
     public User authenticate(String email, String rawPassword) {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidCredentialsException(email));
     }
 }
