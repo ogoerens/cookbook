@@ -1,6 +1,8 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.dto.requests.RecipeBookmarkRequest;
 import com.olgo.cookbook.dto.responses.RecipeBookmarkResponse;
+import com.olgo.cookbook.exceptions.ResourceNotFoundException;
 import com.olgo.cookbook.model.*;
 import com.olgo.cookbook.model.enums.ReferenceType;
 import com.olgo.cookbook.model.records.PictureData;
@@ -73,13 +75,6 @@ public class RecipeBookmarkService {
                 .orElseThrow(() -> new RuntimeException("Bookmark not found or unauthorized"));
     }
 
-    private Set<Tag> resolveTags(List<String> tagNames) {
-        return tagNames.stream()
-                .map(name -> tagRepository.findByNameIgnoreCase(name)
-                        .orElseGet(() -> tagRepository.save(new Tag(name.trim().toLowerCase())))
-                ).collect(Collectors.toSet());
-    }
-
     public PictureData getPictureData(UUID bookmarkId) {
         RecipeBookmark bookmark = getBookmarkById(bookmarkId);
 
@@ -102,4 +97,23 @@ public class RecipeBookmarkService {
 
         bookmarkRepository.deleteById(bookmarkId);
     }
+
+    public void updateBookmark(UUID bookmarkId, UUID userId, RecipeBookmarkRequest request) {
+        RecipeBookmark bookmark = bookmarkRepository.findByIdAndUserId(bookmarkId, userId).orElseThrow(() -> new ResourceNotFoundException(bookmarkId.toString()));
+
+        bookmark.setNote(request.getNote());
+        bookmark.setTags(resolveTags(request.getTags()));
+        bookmark.setName(request.getName());
+        bookmark.setUrl(request.getUrl());
+
+        bookmarkRepository.save(bookmark);
+    }
+
+    private Set<Tag> resolveTags(List<String> tagNames) {
+        return tagNames.stream()
+                .map(name -> tagRepository.findByNameIgnoreCase(name)
+                        .orElseGet(() -> tagRepository.save(new Tag(name.trim().toLowerCase())))
+                ).collect(Collectors.toSet());
+    }
+
 }

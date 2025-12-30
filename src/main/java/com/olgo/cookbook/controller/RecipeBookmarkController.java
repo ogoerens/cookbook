@@ -105,6 +105,13 @@ public class RecipeBookmarkController {
         return ResponseEntity.ok(pictureMetadata);
     }
 
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> updateBookmark(@AuthenticationPrincipal(expression = "id") UUID userId, @PathVariable UUID id, @RequestBody RecipeBookmarkRequest requestBody
+    ) {
+        bookmarkService.updateBookmark(id, userId, requestBody);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> deleteBookmark(@PathVariable UUID id, HttpServletRequest request) {
         String token = RequestUtils.extractJwtFromRequest(request);
