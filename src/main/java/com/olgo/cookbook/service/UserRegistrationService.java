@@ -1,5 +1,6 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.exceptions.DuplicateResourceException;
 import com.olgo.cookbook.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +10,10 @@ import java.time.LocalDate;
 
 @Service
 public class UserRegistrationService {
+
+    private final static String EMAIL = "email";
+    private final static String USERNAME = "username";
+    private final static String PLACEHOLDER = "***";
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -23,11 +28,13 @@ public class UserRegistrationService {
         if (email == null || email.isEmpty() || username == null || username.isEmpty() || rawPassword == null || rawPassword.isEmpty()) {
             throw new IllegalArgumentException("Missing information");
         }
+
         if (userService.emailExists(email)) {
-            throw new RuntimeException("Email is already taken.");
+            throw new DuplicateResourceException(PLACEHOLDER, EMAIL);
         }
+
         if (userService.usernameExists(username)) {
-            throw new RuntimeException("Username is already taken.");
+            throw new DuplicateResourceException(PLACEHOLDER, USERNAME);
         }
 
         String hashedPassword = passwordEncoder.encode(rawPassword);

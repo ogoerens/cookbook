@@ -21,6 +21,6 @@ public class UserLoginService {
     public User authenticate(String email, String rawPassword) {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
-                .orElseThrow(() -> new InvalidCredentialsException(email));
+                .orElseThrow(InvalidCredentialsException::new);
     }
 }

@@ -7,5 +7,7 @@ public interface AuthUseCase {
 
     Cookie logout(String token);
 
+    void register(String email, String username, String password);
+
 
 }

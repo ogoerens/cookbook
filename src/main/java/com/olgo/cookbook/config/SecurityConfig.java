@@ -36,8 +36,8 @@ public class SecurityConfig {
                         // Preflight should always be allowed
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Open auth/registration endpoints (use patterns to avoid brittle exact matches)
-                        .requestMatchers("/api/user/register/**", "/api/auth/login").permitAll()
+                        // Open auth/registration endpoints
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
 
                         // (optional) health/open endpoints
                         .requestMatchers("/api/actuator/health").permitAll()

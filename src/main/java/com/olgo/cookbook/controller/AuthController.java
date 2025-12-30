@@ -1,6 +1,7 @@
 package com.olgo.cookbook.controller;
 
 import com.olgo.cookbook.dto.requests.UserLoginRequest;
+import com.olgo.cookbook.dto.requests.UserRegisterRequest;
 import com.olgo.cookbook.useCase.AuthUseCase;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,6 +36,12 @@ public class AuthController {
         Cookie cookie = auth.logout("token");
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserRegisterRequest request) {
+        auth.register(request.getEmail(), request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
     @GetMapping("/status")
