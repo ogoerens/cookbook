@@ -105,7 +105,7 @@ public class RecipeBookmarkController {
         return ResponseEntity.ok(pictureMetadata);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateBookmark(@AuthenticationPrincipal(expression = "id") UUID userId, @PathVariable UUID id, @RequestBody RecipeBookmarkRequest requestBody
     ) {
         bookmarkService.updateBookmark(id, userId, requestBody);

@@ -1,6 +1,7 @@
 package com.olgo.cookbook.service;
 
 import com.olgo.cookbook.dto.RecipeDto;
+import com.olgo.cookbook.exceptions.ResourceNotFoundException;
 import com.olgo.cookbook.factory.RecipeFactory;
 import com.olgo.cookbook.mapper.RecipeMapper;
 import com.olgo.cookbook.model.Recipe;
@@ -28,5 +29,11 @@ public class RecipeService {
         Recipe recipeEntity = recipeFactory.fromDto(recipeDto);
         Recipe savedRecipe = recipeRepo.save(recipeEntity);
         return recipeMapper.toDto(savedRecipe);
+    }
+
+    public RecipeDto updateRecipe(UUID recipeId, RecipeDto recipeDto) {
+        Recipe recipeEntity = recipeRepo.findById(recipeId).orElseThrow(() -> new ResourceNotFoundException(recipeId.toString()));
+        recipeMapper.updateRecipeFromDto(recipeDto, recipeEntity);
+        return recipeMapper.toDto(recipeRepo.save(recipeEntity));
     }
 }
