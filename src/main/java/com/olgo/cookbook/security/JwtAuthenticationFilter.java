@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String jwt = RequestUtils.extractJwtFromRequest(request);
+        final String jwt = RequestUtils.extractJwt(request);
 
         // If still null, skip
         if (jwt == null) {

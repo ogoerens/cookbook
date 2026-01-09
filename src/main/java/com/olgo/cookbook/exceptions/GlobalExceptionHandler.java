@@ -1,4 +1,4 @@
-package com.olgo.cookbook.exception;
+package com.olgo.cookbook.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

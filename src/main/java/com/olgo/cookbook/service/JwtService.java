@@ -17,6 +17,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private final SecretKey signingKey;
+    private final static int JWT_TTL_MS = 1000 * 60 * 5;
 
     public JwtService(@Value("${jwt.secret}") String jwtSecret) {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
@@ -32,16 +33,16 @@ public class JwtService {
         return resolver.apply(claims);
     }
 
-    public String generateToken(String userId) {
-        return generateToken(Map.of(), userId);
+    public String generateJWToken(String userId) {
+        return generateJWToken(Map.of(), userId);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, String subject) {
+    public String generateJWToken(Map<String, Object> extraClaims, String subject) {
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24h
+                .expiration(new Date(System.currentTimeMillis() + JWT_TTL_MS))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }

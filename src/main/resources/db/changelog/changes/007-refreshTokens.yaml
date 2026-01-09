@@ -1,0 +1,81 @@
+databaseChangeLog:
+- changeSet:
+    id: 1767877083252-1
+    author: ogoerens (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: refresh_tokensPK
+            name: uuid
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: expires_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: ip_address
+            type: VARCHAR(64)
+        - column:
+            constraints:
+              nullable: false
+            name: revoked
+            type: BOOLEAN
+        - column:
+            name: revoked_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: token_hash
+            type: VARCHAR(88)
+        - column:
+            name: user_agent
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: UUID
+        tableName: refresh_tokens
+- changeSet:
+    id: 1767877083252-2
+    author: ogoerens (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: token_hash
+        constraintName: idx_refresh_token_hash
+        tableName: refresh_tokens
+- changeSet:
+    id: 1767877083252-3
+    author: ogoerens (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: idx_refresh_token_user
+        tableName: refresh_tokens
+- changeSet:
+    id: 1767877083252-4
+    author: ogoerens (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: refresh_tokens
+        constraintName: FK1lih5y2npsf8u5o3vhdb9y0os
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+

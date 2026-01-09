@@ -7,8 +7,8 @@ import com.olgo.cookbook.model.Tag;
 import com.olgo.cookbook.model.records.PictureData;
 import com.olgo.cookbook.model.records.PictureMetadata;
 import com.olgo.cookbook.service.JwtService;
-import com.olgo.cookbook.service.PictureService;
 import com.olgo.cookbook.service.RecipeBookmarkService;
+import com.olgo.cookbook.service.image.ImageService;
 import com.olgo.cookbook.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class RecipeBookmarkController {
 
     private final RecipeBookmarkService bookmarkService;
     private final JwtService jwtService;
-    private final PictureService pictureService;
+    private final ImageService imageService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createBookmark(
@@ -100,7 +100,7 @@ public class RecipeBookmarkController {
             @PathVariable("id") UUID bookmarkId
     ) {
         RecipeBookmark bookmark = bookmarkService.getBookmarkById(bookmarkId);
-        List<PictureMetadata> pictureMetadata = pictureService.getPictureMetadataForBookmark(bookmark);
+        List<PictureMetadata> pictureMetadata = imageService.getPictureMetadataForBookmark(bookmark);
 
         return ResponseEntity.ok(pictureMetadata);
     }
@@ -114,7 +114,7 @@ public class RecipeBookmarkController {
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> deleteBookmark(@PathVariable UUID id, HttpServletRequest request) {
-        String token = RequestUtils.extractJwtFromRequest(request);
+        String token = RequestUtils.extractJwt(request);
         UUID userId = UUID.fromString(jwtService.extractUserId(token));
 
         try {

@@ -8,6 +8,7 @@ import com.olgo.cookbook.model.enums.ReferenceType;
 import com.olgo.cookbook.model.records.PictureData;
 import com.olgo.cookbook.repository.RecipeBookmarkRepository;
 import com.olgo.cookbook.repository.TagRepository;
+import com.olgo.cookbook.service.image.ImageService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class RecipeBookmarkService {
     private final EntityManager entityManager;
     private final RecipeBookmarkRepository bookmarkRepository;
     private final TagRepository tagRepository;
-    private final PictureService pictureService;
+    private final ImageService imageService;
 
     @Transactional
     public RecipeBookmark createBookmark(
@@ -51,7 +52,7 @@ public class RecipeBookmarkService {
                 note
         );
         bookmark.setTags(tags);
-        pictureService.addPictures(pictures, bookmark);
+        imageService.addPictures(pictures, bookmark);
 
         return bookmarkRepository.save(bookmark);
     }
