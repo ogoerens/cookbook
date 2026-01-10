@@ -1,6 +1,8 @@
 package com.olgo.cookbook.service;
 
+import com.olgo.cookbook.dto.CreateRecipeDto;
 import com.olgo.cookbook.dto.RecipeDto;
+import com.olgo.cookbook.exceptions.ForbiddenException;
 import com.olgo.cookbook.exceptions.ResourceNotFoundException;
 import com.olgo.cookbook.factory.RecipeFactory;
 import com.olgo.cookbook.mapper.RecipeMapper;
@@ -19,20 +21,26 @@ public class RecipeService {
     final private RecipeFactory recipeFactory;
     final private RecipeMapper recipeMapper;
 
-    public RecipeDto getRecipe(UUID id) {
-        Recipe recipe = recipeRepo.findById(id).orElse(null);
-        return recipeMapper.toDto(recipe);
+    public RecipeDto getRecipe(UUID recipeId, UUID userId) {
+        Recipe recipe = recipeRepo.findById(recipeId).orElse(null);
+        return recipeMapper.toDto(recipe, userId);
     }
 
     @Transactional
-    public RecipeDto createRecipe(RecipeDto recipeDto) {
-        Recipe recipeEntity = recipeFactory.fromDto(recipeDto);
+    public RecipeDto createRecipe(CreateRecipeDto createRecipeDto, UUID userId) {
+        Recipe recipeEntity = recipeFactory.fromDto(createRecipeDto, userId);
         Recipe savedRecipe = recipeRepo.save(recipeEntity);
         return recipeMapper.toDto(savedRecipe);
     }
 
-    public RecipeDto updateRecipe(UUID recipeId, RecipeDto recipeDto) {
+    @Transactional
+    public RecipeDto updateRecipe(UUID recipeId, RecipeDto recipeDto, UUID userId) {
         Recipe recipeEntity = recipeRepo.findById(recipeId).orElseThrow(() -> new ResourceNotFoundException(recipeId.toString()));
+
+        if (!userId.equals(recipeEntity.getCreatedBy().getId())) {
+            throw new ForbiddenException("Recipe does not belong to user.");
+        }
+
         recipeMapper.updateRecipeFromDto(recipeDto, recipeEntity);
         return recipeMapper.toDto(recipeRepo.save(recipeEntity));
     }

@@ -1,15 +1,17 @@
 package com.olgo.cookbook.factory;
 
-import com.olgo.cookbook.dto.RecipeDto;
+import com.olgo.cookbook.dto.CreateRecipeDto;
 import com.olgo.cookbook.dto.RecipeIngredientDto;
 import com.olgo.cookbook.model.Ingredient;
 import com.olgo.cookbook.model.Recipe;
 import com.olgo.cookbook.model.RecipeIngredient;
 import com.olgo.cookbook.repository.IngredientRepository;
+import com.olgo.cookbook.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,8 +19,9 @@ import java.util.stream.Collectors;
 public class RecipeFactory {
 
     private final IngredientRepository ingredientRepo;
+    private final UserRepository userRepo;
 
-    public Recipe fromDto(final RecipeDto recipeDto) {
+    public Recipe fromDto(final CreateRecipeDto recipeDto, UUID userId) {
         Recipe recipe = new Recipe();
         recipe.setName(recipeDto.name());
         recipe.setSteps(recipeDto.steps());
@@ -29,6 +32,8 @@ public class RecipeFactory {
                 .collect(Collectors.toSet());
 
         recipe.setIngredients(recipeIngredients);
+
+        recipe.setCreatedBy(userRepo.getReferenceById(userId));
         return recipe;
     }
 

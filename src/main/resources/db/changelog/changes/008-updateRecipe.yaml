@@ -1,0 +1,79 @@
+databaseChangeLog:
+  # 1) Create the system user if it doesn't exist
+  - changeSet:
+      id: 1767990294996-0
+      author: ogoerens
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              INSERT INTO public.users (id, email, username, password, joined)
+              SELECT
+                '00000000-0000-0000-0000-000000000000'::uuid,
+                'system@local'::text,
+                'system'::text,
+                'noop',
+                CURRENT_DATE
+              WHERE NOT EXISTS (
+                SELECT 1
+                FROM public.users
+                WHERE id = '00000000-0000-0000-0000-000000000000'::uuid
+              );
+
+  # 2) Add the column nullable first
+  - changeSet:
+      id: 1767990294996-1
+      author: ogoerens
+      changes:
+        - addColumn:
+            tableName: recipe
+            columns:
+              - column:
+                  name: created_by_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  # 3) Backfill existing rows
+  - changeSet:
+      id: 1767990294996-1b
+      author: ogoerens
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              UPDATE public.recipe
+              SET created_by_id = '00000000-0000-0000-0000-000000000000'::uuid
+              WHERE created_by_id IS NULL;
+
+  # 4) Set default + NOT NULL
+  - changeSet:
+      id: 1767990294996-1c
+      author: ogoerens
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              ALTER TABLE public.recipe
+              ALTER COLUMN created_by_id
+              SET DEFAULT '00000000-0000-0000-0000-000000000000'::uuid;
+
+        - addNotNullConstraint:
+            tableName: recipe
+            columnName: created_by_id
+            columnDataType: uuid
+
+  # 5) Add FK constraint
+  - changeSet:
+      id: 1767990294996-2
+      author: ogoerens
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: recipe
+            baseColumnNames: created_by_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: FKe781jc4y295961ojw7fn4q2eu
+            deferrable: false
+            initiallyDeferred: false
+            validate: true

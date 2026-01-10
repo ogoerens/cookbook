@@ -21,5 +21,9 @@ public class Recipe {
     @OrderColumn
     private List<String> steps = new ArrayList<>();
 
+    @JoinColumn(name = "created_by_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User createdBy;
+
 
 }

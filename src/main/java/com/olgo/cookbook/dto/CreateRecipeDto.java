@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public record RecipeDto(
+public record CreateRecipeDto(
         UUID id,
         String name,
         Set<RecipeIngredientDto> ingredients,
-        List<String> steps,
-        UUID createdBy,
-        Boolean canEdit
+        List<String> steps
 ) {
 }
 

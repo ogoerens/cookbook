@@ -13,4 +13,6 @@ databaseChangeLog:
       file: db/changelog/changes/006-mealPlan.yaml
   - include:
       file: db/changelog/changes/007-refreshTokens.yaml
+  - include:
+      file: db/changelog/changes/008-updateRecipe.yaml
 
